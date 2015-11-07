@@ -1,3 +1,20 @@
+#
+#  Copyright (C) 2015 Yunosuke Higashi
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
 library(tm)
 library(arules)
 
@@ -6,8 +23,7 @@ x<-0
 
 
 get.tdm <- function(doc.vec){
-    #ストップワード用文字列置換
-    
+    #前処理用文字列置換
     #doc.vec<-gsub("\ .+\\/.+\ "," ",doc.vec)#パス消去
     #doc.vec<-gsub("\\."," ",doc.vec)#ピリオド置換
     #doc.vec<-gsub("-"," ",doc.vec)
@@ -41,12 +57,15 @@ get_corpus <-function(tdm){
     corpus <- data.frame(cbind(names(tdm.counts),as.numeric(tdm.counts)),stringsAsFactors = F)
     names(corpus) <- c("term","frequency")
     corpus$frequency <- as.numeric(corpus$frequency)
-    #write.table(corpus, file="xxxx.csv", sep=",",quote=F,row.names=F,col.names=T,fileEncoding="utf-8" )
+    
+    #単語出現回数ファイル出力
+    #write.table(corpus, file="xxxx-corpus.csv", sep=",",quote=F,row.names=F,col.names=T,fileEncoding="utf-8" )
     return (corpus)
 }
 
 
-check_stopwords <- function(df){
+
+check_stopwords <- function(df){#x回出現した単語をチェック
     g<-subset(df,frequency==x,c(term,frequency))
     g<-g$term
     g<-as.matrix(g)
@@ -55,9 +74,7 @@ check_stopwords <- function(df){
     return(g)
     
 }
-
-
-remove_stopwords<-function(g,m){
+remove_stopwords<-function(g,m){#x回出現した単語を消去
     g<-as.vector(g)
     #print(g)
     p<-length(g)
